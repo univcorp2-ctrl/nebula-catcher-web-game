@@ -12,13 +12,7 @@
     "test": "vitest run",
     "check": "npm run lint && npm test && npm run build"
   },
-  "keywords": [
-    "game",
-    "canvas",
-    "vite",
-    "cloudflare-pages",
-    "github-pages"
-  ],
+  "keywords": ["game", "canvas", "vite", "cloudflare-pages", "github-pages"],
   "author": "GitHub-GPT Developer",
   "license": "MIT",
   "devDependencies": {
