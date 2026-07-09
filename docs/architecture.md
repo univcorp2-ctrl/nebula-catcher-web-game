@@ -25,7 +25,6 @@ sequenceDiagram
     participant GameLoop as requestAnimationFrame loop
     participant Logic as gameLogic.js
     participant Canvas
-
     Player->>Browser: Keyboard / touch / pointer input
     Browser->>GameLoop: Store current controls
     loop Every animation frame
