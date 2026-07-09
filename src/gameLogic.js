@@ -42,35 +42,23 @@ export function getDifficulty(score, elapsedMs) {
 }
 
 export function movePlayer(player, direction, deltaSeconds, bounds = WORLD) {
-  const nextX = player.x + direction * player.speed * deltaSeconds;
   return {
     ...player,
-    x: clamp(nextX, 0, bounds.width - player.width)
+    x: clamp(player.x + direction * player.speed * deltaSeconds, 0, bounds.width - player.width)
   };
 }
 
 export function movePlayerToward(player, targetX, deltaSeconds, bounds = WORLD) {
   const centerX = player.x + player.width / 2;
   const distance = targetX - centerX;
-  if (Math.abs(distance) < 2) {
-    return player;
-  }
-  const direction = Math.sign(distance);
+  if (Math.abs(distance) < 2) return player;
   const maxStep = player.speed * deltaSeconds;
-  const nextCenter = Math.abs(distance) <= maxStep ? targetX : centerX + direction * maxStep;
-  return {
-    ...player,
-    x: clamp(nextCenter - player.width / 2, 0, bounds.width - player.width)
-  };
+  const nextCenter = Math.abs(distance) <= maxStep ? targetX : centerX + Math.sign(distance) * maxStep;
+  return { ...player, x: clamp(nextCenter - player.width / 2, 0, bounds.width - player.width) };
 }
 
 export function rectsOverlap(a, b) {
-  return (
-    a.x < b.x + b.width &&
-    a.x + a.width > b.x &&
-    a.y < b.y + b.height &&
-    a.y + a.height > b.y
-  );
+  return a.x < b.x + b.width && a.x + a.width > b.x && a.y < b.y + b.height && a.y + a.height > b.y;
 }
 
 export function createFallingObject(rng, difficulty, id, bounds = WORLD) {
@@ -92,11 +80,7 @@ export function createFallingObject(rng, difficulty, id, bounds = WORLD) {
 
 export function updateEntities(entities, deltaSeconds, bounds = WORLD) {
   return entities
-    .map((entity) => ({
-      ...entity,
-      y: entity.y + entity.speed * deltaSeconds,
-      rotation: entity.rotation + entity.spin * deltaSeconds
-    }))
+    .map((entity) => ({ ...entity, y: entity.y + entity.speed * deltaSeconds, rotation: entity.rotation + entity.spin * deltaSeconds }))
     .filter((entity) => entity.y < bounds.height + entity.height);
 }
 
@@ -104,27 +88,16 @@ export function resolveCollisions(state) {
   let scoreDelta = 0;
   let livesDelta = 0;
   const remaining = [];
-
   for (const entity of state.entities) {
     if (!rectsOverlap(state.player, entity)) {
       remaining.push(entity);
-      continue;
-    }
-
-    if (entity.type === 'star') {
+    } else if (entity.type === 'star') {
       scoreDelta += 10;
     } else {
       livesDelta -= 1;
     }
   }
-
-  return {
-    ...state,
-    score: state.score + scoreDelta,
-    lives: state.lives + livesDelta,
-    entities: remaining,
-    gameOver: state.lives + livesDelta <= 0
-  };
+  return { ...state, score: state.score + scoreDelta, lives: state.lives + livesDelta, entities: remaining, gameOver: state.lives + livesDelta <= 0 };
 }
 
 export function formatTime(milliseconds) {
