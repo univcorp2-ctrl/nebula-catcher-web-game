@@ -29,7 +29,6 @@ flowchart LR
     C --> L[Game rules: src/gameLogic.js]
     L --> C
     C --> H[HUD and localStorage high score]
-    L --> T[Vitest unit tests]
     G[GitHub Actions] --> N[npm install]
     N --> Q[Lint]
     Q --> V[Vitest]
@@ -55,31 +54,4 @@ npm run dev
 npm run check
 ```
 
-`npm run check` executes lint, unit tests, and a Vite production build.
-
-## CI/CD
-
-- `.github/workflows/ci.yml`: lint, test, build, and upload the `dist` artifact.
-- `.github/workflows/pages.yml`: deploys `dist` to GitHub Pages.
-- `.github/workflows/cloudflare-pages.yml`: deploys `dist` to Cloudflare Pages with Wrangler Direct Upload.
-
-## Cloudflare setup
-
-The Cloudflare workflow requires these GitHub Actions settings:
-
-| Type | Name | Notes |
-| --- | --- | --- |
-| Secret | `CLOUDFLARE_ACCOUNT_ID` | Cloudflare account ID |
-| Secret | `CLOUDFLARE_API_TOKEN` | Pages deploy-capable token |
-| Variable | `CLOUDFLARE_PROJECT_NAME` | Recommended: `nebula-catcher-web-game` |
-
-After the Pages project is deployed, attach the domain you already own from **Cloudflare Dashboard > Workers & Pages > nebula-catcher-web-game > Custom domains**.
-
-See [`docs/setup.md`](docs/setup.md) for step-by-step setup and [`docs/architecture.md`](docs/architecture.md) for the full architecture notes.
-
-## Production requirements
-
-- Node.js 20 for CI/build.
-- Static hosting for `dist/`.
-- GitHub Pages source set to GitHub Actions for the GitHub Pages URL.
-- Cloudflare Secrets and custom domain connection for Cloudflare production URL.
+See [`docs/setup.md`](docs/setup.md) for step-by-step setup and [`docs/architecture.md`](docs/architecture.md) for architecture notes.
