@@ -1,18 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import {
-  WORLD,
-  clamp,
-  createFallingObject,
-  createGameState,
-  createRng,
-  formatTime,
-  getDifficulty,
-  movePlayer,
-  nextSpawnIntervalSeconds,
-  rectsOverlap,
-  resolveCollisions,
-  updateEntities
-} from '../src/gameLogic.js';
+import { WORLD, clamp, createFallingObject, createGameState, createRng, formatTime, getDifficulty, movePlayer, nextSpawnIntervalSeconds, rectsOverlap, resolveCollisions, updateEntities } from '../src/gameLogic.js';
 
 describe('game logic', () => {
   it('clamps values inside bounds', () => {
@@ -25,7 +12,6 @@ describe('game logic', () => {
     const state = createGameState();
     const left = movePlayer({ ...state.player, x: 0 }, -1, 10);
     const right = movePlayer({ ...state.player, x: WORLD.width - state.player.width }, 1, 10);
-
     expect(left.x).toBe(0);
     expect(right.x).toBe(WORLD.width - state.player.width);
   });
@@ -42,9 +28,7 @@ describe('game logic', () => {
       { id: 2, type: 'meteor', x: state.player.x, y: state.player.y, width: 20, height: 20, speed: 1, rotation: 0, spin: 0 },
       { id: 3, type: 'star', x: 10, y: 10, width: 20, height: 20, speed: 1, rotation: 0, spin: 0 }
     ];
-
     const result = resolveCollisions(state);
-
     expect(result.score).toBe(10);
     expect(result.lives).toBe(2);
     expect(result.entities).toHaveLength(1);
@@ -56,15 +40,11 @@ describe('game logic', () => {
       { id: 1, type: 'star', x: 0, y: 0, width: 20, height: 20, speed: 100, rotation: 0, spin: 0 },
       { id: 2, type: 'meteor', x: 0, y: WORLD.height + 30, width: 20, height: 20, speed: 100, rotation: 0, spin: 0 }
     ];
-
     expect(updateEntities(entities, 1)).toHaveLength(1);
   });
 
   it('creates deterministic objects with seeded rng', () => {
-    const a = createFallingObject(createRng(42), 1.5, 1);
-    const b = createFallingObject(createRng(42), 1.5, 1);
-
-    expect(a).toEqual(b);
+    expect(createFallingObject(createRng(42), 1.5, 1)).toEqual(createFallingObject(createRng(42), 1.5, 1));
   });
 
   it('ramps difficulty and spawn interval safely', () => {
