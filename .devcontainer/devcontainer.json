@@ -5,8 +5,7 @@
     "vscode": {
       "extensions": [
         "dbaeumer.vscode-eslint",
-        "vitest.explorer",
-        "bradlc.vscode-tailwindcss"
+        "vitest.explorer"
       ]
     }
   },
