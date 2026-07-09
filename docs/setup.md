@@ -1,6 +1,6 @@
 # Setup and deployment guide
 
-This project is already wired for local development, CI, GitHub Pages deployment, and Cloudflare Pages deployment.
+This project is wired for local development, CI, GitHub Pages deployment, and Cloudflare Pages deployment.
 
 ## Local development
 
@@ -8,8 +8,6 @@ This project is already wired for local development, CI, GitHub Pages deployment
 npm install
 npm run dev
 ```
-
-Open the Vite preview URL shown by the terminal.
 
 ## Quality checks
 
@@ -20,8 +18,6 @@ npm run check
 This runs lint, unit tests, and a production build.
 
 ## GitHub Pages publication
-
-The repository includes `.github/workflows/pages.yml`.
 
 1. Open the repository on GitHub.
 2. Go to **Settings > Pages**.
@@ -36,7 +32,7 @@ https://<github-owner>.github.io/nebula-catcher-web-game/
 
 ## Cloudflare Pages publication
 
-Cloudflare Pages can deploy a prebuilt `dist/` directory by Direct Upload with Wrangler. The workflow `.github/workflows/cloudflare-pages.yml` is prepared for that path.
+The workflow `.github/workflows/cloudflare-pages.yml` uses Wrangler Direct Upload to deploy the prebuilt `dist/` directory.
 
 ### Required GitHub Actions Secrets
 
@@ -77,11 +73,4 @@ After the Cloudflare Pages project exists:
 6. Enter the domain or subdomain you already own in Cloudflare.
 7. Continue and activate the domain.
 
-Cloudflare will create or guide the needed DNS record for the Pages project. Do not commit domain secrets or API tokens to the repository.
-
-## Files to change when customizing
-
-- Change gameplay rules in `src/gameLogic.js`.
-- Change visuals and input behavior in `src/main.js`.
-- Change layout and colors in `src/styles.css`.
-- Change deployment project name in `wrangler.toml` and `CLOUDFLARE_PROJECT_NAME`.
+Do not commit domain secrets or API tokens to the repository.
