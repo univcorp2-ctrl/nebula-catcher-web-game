@@ -16,7 +16,7 @@
   "author": "GitHub-GPT Developer",
   "license": "MIT",
   "devDependencies": {
-    "vite": "^5.4.11",
+    "vite": "^8.1.4",
     "vitest": "^2.1.8"
   }
 }
