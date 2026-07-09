@@ -1,18 +1,5 @@
 import './styles.css';
-import {
-  WORLD,
-  clamp,
-  createFallingObject,
-  createGameState,
-  createRng,
-  formatTime,
-  getDifficulty,
-  movePlayer,
-  movePlayerToward,
-  nextSpawnIntervalSeconds,
-  resolveCollisions,
-  updateEntities
-} from './gameLogic.js';
+import { WORLD, clamp, createFallingObject, createGameState, createRng, formatTime, getDifficulty, movePlayer, movePlayerToward, nextSpawnIntervalSeconds, resolveCollisions, updateEntities } from './gameLogic.js';
 
 const canvas = document.querySelector('#game');
 const ctx = canvas.getContext('2d');
@@ -21,16 +8,9 @@ const livesEl = document.querySelector('#lives');
 const timeEl = document.querySelector('#time');
 const highScoreEl = document.querySelector('#high-score');
 const startButton = document.querySelector('#start-button');
-
 const STORAGE_KEY = 'nebula-catcher-high-score';
 const keys = new Set();
-const stars = Array.from({ length: 86 }, (_, index) => ({
-  x: (index * 97) % WORLD.width,
-  y: (index * 53) % WORLD.height,
-  radius: 0.8 + (index % 4) * 0.45,
-  alpha: 0.35 + (index % 5) * 0.12
-}));
-
+const stars = Array.from({ length: 86 }, (_, index) => ({ x: (index * 97) % WORLD.width, y: (index * 53) % WORLD.height, radius: 0.8 + (index % 4) * 0.45, alpha: 0.35 + (index % 5) * 0.12 }));
 let state = createGameState();
 let rng = createRng(Date.now());
 let lastFrame = performance.now();
@@ -43,9 +23,7 @@ function readHighScore() {
 
 function writeHighScore(score) {
   const current = readHighScore();
-  if (score > current) {
-    localStorage.setItem(STORAGE_KEY, String(score));
-  }
+  if (score > current) localStorage.setItem(STORAGE_KEY, String(score));
   highScoreEl.textContent = String(Math.max(score, current));
 }
 
@@ -66,10 +44,7 @@ function directionFromKeys() {
 }
 
 function update(deltaSeconds) {
-  if (!running || state.gameOver) {
-    return;
-  }
-
+  if (!running || state.gameOver) return;
   const direction = directionFromKeys();
   if (direction !== 0) {
     targetX = null;
@@ -77,17 +52,14 @@ function update(deltaSeconds) {
   } else if (targetX !== null) {
     state.player = movePlayerToward(state.player, targetX, deltaSeconds);
   }
-
   state.elapsedMs += deltaSeconds * 1000;
   state.entities = updateEntities(state.entities, deltaSeconds);
-
   const difficulty = getDifficulty(state.score, state.elapsedMs);
   state.spawnTimer -= deltaSeconds;
   while (state.spawnTimer <= 0) {
     state.entities.push(createFallingObject(rng, difficulty, state.nextId++));
     state.spawnTimer += nextSpawnIntervalSeconds(difficulty);
   }
-
   state = resolveCollisions(state);
   if (state.gameOver) {
     running = false;
@@ -103,7 +75,6 @@ function drawBackground(timeMs) {
   gradient.addColorStop(1, '#26104a');
   ctx.fillStyle = gradient;
   ctx.fillRect(0, 0, WORLD.width, WORLD.height);
-
   for (const star of stars) {
     const twinkle = Math.sin(timeMs * 0.0015 + star.x) * 0.18;
     ctx.globalAlpha = clamp(star.alpha + twinkle, 0.15, 1);
@@ -119,7 +90,6 @@ function drawPlayer() {
   const player = state.player;
   ctx.save();
   ctx.translate(player.x + player.width / 2, player.y + player.height / 2);
-
   ctx.shadowColor = '#80f5ff';
   ctx.shadowBlur = 20;
   ctx.fillStyle = '#70f5ff';
@@ -130,7 +100,6 @@ function drawPlayer() {
   ctx.lineTo(-player.width / 2, player.height / 2);
   ctx.closePath();
   ctx.fill();
-
   ctx.shadowBlur = 0;
   ctx.fillStyle = '#17234f';
   ctx.beginPath();
@@ -170,18 +139,11 @@ function drawMeteor(entity) {
   ctx.beginPath();
   ctx.ellipse(0, 0, entity.width / 2, entity.height / 2.6, 0.25, 0, Math.PI * 2);
   ctx.fill();
-  ctx.shadowBlur = 0;
-  ctx.fillStyle = '#6b2d28';
-  ctx.beginPath();
-  ctx.arc(entity.width * 0.1, -entity.height * 0.08, entity.width * 0.12, 0, Math.PI * 2);
-  ctx.fill();
   ctx.restore();
 }
 
 function drawGameOver() {
-  if (!state.gameOver) {
-    return;
-  }
+  if (!state.gameOver) return;
   ctx.save();
   ctx.fillStyle = 'rgba(5, 8, 20, 0.72)';
   ctx.fillRect(0, 0, WORLD.width, WORLD.height);
@@ -197,13 +159,9 @@ function drawGameOver() {
 
 function render(timeMs = performance.now()) {
   drawBackground(timeMs);
-  for (const entity of state.entities) {
-    if (entity.type === 'star') drawStar(entity);
-    else drawMeteor(entity);
-  }
+  for (const entity of state.entities) entity.type === 'star' ? drawStar(entity) : drawMeteor(entity);
   drawPlayer();
   drawGameOver();
-
   scoreEl.textContent = String(state.score);
   livesEl.textContent = String(Math.max(0, state.lives));
   timeEl.textContent = formatTime(state.elapsedMs);
@@ -223,36 +181,22 @@ function canvasPointerToWorldX(event) {
 }
 
 window.addEventListener('keydown', (event) => {
-  if (['ArrowLeft', 'ArrowRight', 'KeyA', 'KeyD', 'Space', 'Enter'].includes(event.code)) {
-    event.preventDefault();
-  }
-  if (event.code === 'Space' || event.code === 'Enter') {
-    resetGame();
-  }
+  if (['ArrowLeft', 'ArrowRight', 'KeyA', 'KeyD', 'Space', 'Enter'].includes(event.code)) event.preventDefault();
+  if (event.code === 'Space' || event.code === 'Enter') resetGame();
   keys.add(event.code);
 });
-
-window.addEventListener('keyup', (event) => {
-  keys.delete(event.code);
-});
-
+window.addEventListener('keyup', (event) => keys.delete(event.code));
 canvas.addEventListener('pointerdown', (event) => {
   targetX = canvasPointerToWorldX(event);
   canvas.setPointerCapture(event.pointerId);
 });
-
 canvas.addEventListener('pointermove', (event) => {
-  if (event.buttons > 0) {
-    targetX = canvasPointerToWorldX(event);
-  }
+  if (event.buttons > 0) targetX = canvasPointerToWorldX(event);
 });
-
 canvas.addEventListener('pointerup', () => {
   targetX = null;
 });
-
 startButton.addEventListener('click', resetGame);
-
 writeHighScore(0);
 render();
 requestAnimationFrame(loop);
